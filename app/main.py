@@ -19,7 +19,7 @@ app = FastAPI(
 app.include_router(api_router)
 
 # Add CORS middleware
-origins = ["http://localhost:5173"]
+origins = ["http://localhost:5173", "https://ecommerce-react-frontend-two.vercel.app"]
 
 app.add_middleware(
     CORSMiddleware,
