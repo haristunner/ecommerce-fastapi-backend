@@ -6,7 +6,11 @@ from app.db.connection import Base, engine
 
 from app.routes import api_router
 
-Base.metadata.create_all(bind=engine)
+try:
+    Base.metadata.create_all(bind=engine)
+except Exception as e:
+    print(e)
+
 
 app = FastAPI(
     title="E-Commerce API",
