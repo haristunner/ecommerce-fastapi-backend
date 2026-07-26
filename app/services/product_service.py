@@ -115,3 +115,38 @@ def add_product(db: Session, product: ProductCreate):
     db.refresh(new_product)
 
     return new_product
+
+
+def update_product(db: Session, product_id: int, product: ProductCreate):
+    existing = db.query(Product).filter(Product.id == product_id).first()
+
+    if existing is None:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+    category = db.query(Category).filter(Category.id == product.category_id).first()
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found")
+
+    existing.name = product.name
+    existing.description = product.description
+    existing.price = product.price
+    existing.stock = product.stock
+    existing.image_url = product.image_url
+    existing.category_id = product.category_id
+
+    db.commit()
+    db.refresh(existing)
+
+    return existing
+
+
+def delete_product(db: Session, product_id: int):
+    product = db.query(Product).filter(Product.id == product_id).first()
+
+    if product is None:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+    db.delete(product)
+    db.commit()
+
+    return {"message": "Product deleted successfully"}

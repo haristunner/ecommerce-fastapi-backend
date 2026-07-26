@@ -2,7 +2,13 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.db.connection import get_db
-from app.services.product_service import add_product, get_products, get_product_by_id
+from app.services.product_service import (
+    add_product,
+    delete_product,
+    get_products,
+    get_product_by_id,
+    update_product,
+)
 from app.schemas.product import ProductCreate, ProductResponse
 from app.models.user import User
 from app.services.auth_service import get_current_user
@@ -46,3 +52,15 @@ def get_product(
 def create_product(product: ProductCreate, db: Session = Depends(get_db)):
 
     return add_product(db=db, product=product)
+
+
+@router.put("/{product_id}", response_model=ProductResponse)
+def edit_product(
+    product_id: int, product: ProductCreate, db: Session = Depends(get_db)
+):
+    return update_product(db=db, product_id=product_id, product=product)
+
+
+@router.delete("/{product_id}")
+def remove_product(product_id: int, db: Session = Depends(get_db)):
+    return delete_product(db=db, product_id=product_id)
