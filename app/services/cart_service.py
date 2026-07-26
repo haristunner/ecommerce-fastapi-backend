@@ -42,6 +42,8 @@ def get_cart(db: Session, user_id: int):
         .all()
     )
 
+    print("Cart_items::", cart_items)
+
     items = []
     grand_total = 0
     total_items = 0

@@ -1,23 +1,27 @@
-from sqlalchemy import Column, Integer, Float, String, ForeignKey, DateTime, JSON
+from sqlalchemy import JSON, Column, DateTime, Enum, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from app.db.connection import Base
 
 
-class Order(Base):
-    __tablename__ = "orders"
+class Checkout(Base):
+    __tablename__ = "checkouts"
 
     id = Column(Integer, primary_key=True, index=True)
 
-    user_id = Column(
-        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
-    )
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     address_id = Column(Integer, ForeignKey("addresses.id"), nullable=True)
+
     payment_method = Column(String, nullable=True)
+    total_amount = Column(Float, nullable=False)
+
     payment_details = Column(JSON, nullable=True)
 
-    total_amount = Column(Float, nullable=False)
+    checkout_type = Column(
+        Enum("cart", "buy_now", name="checkout_type"),
+        nullable=False,
+    )
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
@@ -25,8 +29,11 @@ class Order(Base):
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
 
-    user = relationship("User", back_populates="orders")
+    user = relationship("User")
     address = relationship("Address")
-    order_items = relationship(
-        "OrderItem", back_populates="order", cascade="all, delete-orphan"
+
+    items = relationship(
+        "CheckoutItem",
+        back_populates="checkout",
+        cascade="all, delete-orphan",
     )

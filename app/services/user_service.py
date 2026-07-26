@@ -7,9 +7,7 @@ from app.utils.security import hash_password, verify_password
 
 def create_user(db: Session, user: UserCreate):
 
-    existing_user = db.query(User).filter(
-        User.email == user.email
-    ).first()
+    existing_user = db.query(User).filter(User.email == user.email).first()
 
     if existing_user:
         return None
@@ -17,7 +15,8 @@ def create_user(db: Session, user: UserCreate):
     new_user = User(
         name=user.name,
         email=user.email,
-        password=hash_password(user.password)
+        password=hash_password(user.password),
+        mobile_number=user.mobile_number,
     )
 
     db.add(new_user)
@@ -27,12 +26,9 @@ def create_user(db: Session, user: UserCreate):
     return new_user
 
 
-
 def authenticate_user(db, email, password):
 
-    user = db.query(User).filter(
-        User.email == email
-    ).first()
+    user = db.query(User).filter(User.email == email).first()
 
     if not user:
         return None

@@ -5,6 +5,7 @@ from sqlalchemy import asc, desc
 from app.models.product import Product
 from app.models.category import Category
 from app.schemas.product import ProductCreate
+from app.models.wishlist import Wishlist
 
 
 def get_products(
@@ -69,14 +70,26 @@ def get_products(
     }
 
 
-def get_product_by_id(db: Session, product_id: int):
+def get_product_by_id(db: Session, product_id: int, user_id: int):
 
     product = db.query(Product).filter(Product.id == product_id).first()
 
     if product is None:
         raise HTTPException(status_code=404, detail="Product not found")
 
-    return product
+    is_wishlisted = (
+        db.query(Wishlist)
+        .filter(
+            Wishlist.user_id == user_id,
+            Wishlist.product_id == product_id,
+        )
+        .first()
+        is not None
+    )
+
+    print(f"Is product {product_id} wishlisted by user {user_id}? {is_wishlisted}")
+
+    return {**product.__dict__, "is_wishlisted": is_wishlisted}
 
 
 def add_product(db: Session, product: ProductCreate):

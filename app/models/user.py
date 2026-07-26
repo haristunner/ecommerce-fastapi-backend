@@ -16,6 +16,8 @@ class User(Base):
 
     password = Column(String(255), nullable=False)
 
+    mobile_number = Column(String(15), nullable=True)
+
     role = Column(String(20), default="user")
 
     is_active = Column(Boolean, default=True)
@@ -24,6 +26,10 @@ class User(Base):
 
     updated_at = Column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+    addresses = relationship(
+        "Address", back_populates="user", cascade="all, delete-orphan"
     )
 
     wishlists = relationship(

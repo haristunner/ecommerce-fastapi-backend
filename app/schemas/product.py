@@ -1,8 +1,9 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
 
 class ProductCreate(BaseModel):
-
     name: str
     description: str
     price: float
@@ -12,7 +13,6 @@ class ProductCreate(BaseModel):
 
 
 class ProductResponse(BaseModel):
-
     id: int
     name: str
     description: str
@@ -22,6 +22,7 @@ class ProductResponse(BaseModel):
     rating: float
     is_available: bool
     category_id: int
+    is_wishlisted: Optional[bool] = None
 
     class Config:
         from_attributes = True
